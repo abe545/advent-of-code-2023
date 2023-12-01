@@ -8,42 +8,35 @@ xtwone3four
 zoneight234
 7pqrstsixteen"""
 
-def maybe_integer(input_string: str, from_end: bool = False):
+_numberMap = dict(zip("one two three four five six seven eight nine".split(), count(1)))
+def maybe_integer(input_string: str, *, from_end: bool = False):
     if not len(input_string):
         return
-    if input_string[0].isdigit():
-        return input_string[0]
-    if (not from_end and input_string.startswith("one")) or (from_end and input_string.startswith("eno")):
-        return "1"
-    if (not from_end and input_string.startswith("two")) or (from_end and input_string.startswith("owt")):
-        return "2"
-    if (not from_end and input_string.startswith("three")) or (from_end and input_string.startswith("eerht")):
-        return "3"
-    if (not from_end and input_string.startswith("four")) or (from_end and input_string.startswith("ruof")):
-        return "4"
-    if (not from_end and input_string.startswith("five")) or (from_end and input_string.startswith("evif")):
-        return "5"
-    if (not from_end and input_string.startswith("six")) or (from_end and input_string.startswith("xis")):
-        return "6"
-    if (not from_end and input_string.startswith("seven")) or (from_end and input_string.startswith("neves")):
-        return "7"
-    if (not from_end and input_string.startswith("eight")) or (from_end and input_string.startswith("thgie")):
-        return "8"
-    if (not from_end and input_string.startswith("nine")) or (from_end and input_string.startswith("enin")):
-        return "9"
+
+    find = str.startswith
+    if from_end:
+        find = str.endswith
+        if input_string[-1].isdigit():
+            return int(input_string[-1])
+    elif input_string[0].isdigit():
+        return int(input_string[0])
+
+    for k,v in _numberMap.items():
+        if find(input_string, k):
+            return v
 
 def get_digits_part2(input_string: str = example_input):
     lines = input_string.splitlines()
     for line in lines:
         first_digit=None
         second_digit=None
-        for i in range(len(line)):
-            first_digit = maybe_integer(line[i:], False)
+        line_len = len(line)
+        for i in range(line_len):
+            first_digit = maybe_integer(line[i:])
             if first_digit is not None:
                 break
-        line = line[::-1]
-        for i in range(len(line)):
-            second_digit = maybe_integer(line[i:], True)
+        for i in range(line_len):
+            second_digit = maybe_integer(line[:line_len-i], from_end=True)
             if second_digit is not None:
                 break
-        yield int(first_digit+second_digit)
+        yield 10*first_digit+second_digit
