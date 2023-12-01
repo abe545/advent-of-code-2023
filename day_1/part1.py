@@ -3,19 +3,10 @@ pqr3stu8vwx
 a1b2c3d4e5f
 treb7uchet"""
 
-def get_digits_part1(input_string: str = example_input):
+def part1(input_string: str = example_input):
     lines = input_string.split('\n')
-    for line in lines:
-        first_digit = ''
-        last_digit = ''
-        for char in line:
-            if char.isdigit():
-                first_digit = char
-                break
-        for char in reversed(line):
-            if char.isdigit():
-                last_digit = char
-                break
+    for line in map(_ints, lines):
+        yield line[0]*10+line[-1]
 
-        yield int(first_digit+last_digit)
-
+def _ints(input_string: str):
+    return list(int(c) for c in input_string if c.isdigit())
