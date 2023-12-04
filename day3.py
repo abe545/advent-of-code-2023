@@ -1,4 +1,4 @@
-import itertools
+from itertools import chain
 from collections import defaultdict
 from dataclasses import dataclass
 
@@ -52,7 +52,7 @@ class PotentialGear:
     x: int
 
     def is_gear(self, part_numbers: dict[int,list[PartNumber]]):
-        return sum(itertools.chain.from_iterable([
+        return sum(chain.from_iterable([
             [1 for ppn in part_numbers.get(self.schematic_line - 1, []) if self.is_connected_horizontally(ppn)],
             [1 for ppn in part_numbers.get(self.schematic_line, []) if self.is_connected_horizontally(ppn)],
             [1 for ppn in part_numbers.get(self.schematic_line + 1, []) if self.is_connected_horizontally(ppn)]
@@ -62,7 +62,7 @@ class PotentialGear:
         return pn.start_x - 1 <= self.x <= pn.end_x + 1
 
     def gear_ratio(self, part_numbers: dict[int,list[PartNumber]]):
-        adjacent_parts = list(itertools.chain.from_iterable([
+        adjacent_parts = list(chain.from_iterable([
             [pn.part_number for pn in part_numbers.get(self.schematic_line - 1, []) if self.is_connected_horizontally(pn)],
             [pn.part_number for pn in part_numbers.get(self.schematic_line, []) if self.is_connected_horizontally(pn)],
             [pn.part_number for pn in part_numbers.get(self.schematic_line + 1, []) if self.is_connected_horizontally(pn)]
