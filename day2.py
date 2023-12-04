@@ -1,4 +1,4 @@
-from functools import partial, reduce
+from functools import reduce
 
 from day2_input import real_input
 
@@ -27,7 +27,7 @@ def gameScore(game: str):
 
 
 def part1(all_input = example_input):
-    return sum(map(partial(gameScore), all_input.splitlines()))
+    return sum(map(gameScore, all_input.splitlines()))
 
 
 def get_required_power(game: str):
