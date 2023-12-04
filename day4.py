@@ -14,22 +14,23 @@ class ScratchCard:
     winning_numbers: set[int]
     numbers: list[int]
     card_number: int
-
-    def matches(self) -> int:
-        return sum(1 for n in self.numbers if n in self.winning_numbers)
+    matches: int
 
     def part1_score(self) -> int:
-        return 0 if (matches := self.matches()) == 0 else 2 ** (matches-1)
+        return 0 if self.matches == 0 else 2 ** (self.matches-1)
 
     @classmethod
     def from_str(cls, s: str) -> ScratchCard:
         parts = s.split(':')
 
         number_parts = parts[1].split('|')
+        winning_numbers = frozenset(int(n) for n in number_parts[0].split())
+        numbers = frozenset(int(n) for n in number_parts[1].split())
         return ScratchCard(
-            {int(n) for n in number_parts[0].split()},
-            {int(n) for n in number_parts[1].split()},
-            int(parts[0][5:])
+            winning_numbers,
+            numbers,
+            int(parts[0][5:]),
+            sum(1 for n in numbers if n in winning_numbers)
         )
 
 def get_cards(cards: str) -> list[ScratchCard]:
@@ -39,7 +40,7 @@ def part1(cards=example_input) -> int:
     return sum(c.part1_score() for c in get_cards(cards))
 
 def part2(cards=example_input) -> int:
-    card_counts = [(c.card_number, c.matches(), 1) for c in get_cards(cards)]
+    card_counts = [(c.card_number, c.matches, 1) for c in get_cards(cards)]
     for i, matches, count in card_counts:
         for j in range(i, i+matches):
             (card_number, card_matches, current_count) = card_counts[j]
