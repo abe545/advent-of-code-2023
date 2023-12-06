@@ -52,21 +52,21 @@ class PotentialGear:
     x: int
 
     def is_gear(self, part_numbers: dict[int,list[PartNumber]]):
-        return sum(chain.from_iterable([
+        return sum(chain(
             [1 for ppn in part_numbers.get(self.schematic_line - 1, []) if self.is_connected_horizontally(ppn)],
             [1 for ppn in part_numbers.get(self.schematic_line, []) if self.is_connected_horizontally(ppn)],
             [1 for ppn in part_numbers.get(self.schematic_line + 1, []) if self.is_connected_horizontally(ppn)]
-        ])) == 2
+        )) == 2
 
     def is_connected_horizontally(self, pn: PartNumber):
         return pn.start_x - 1 <= self.x <= pn.end_x + 1
 
     def gear_ratio(self, part_numbers: dict[int,list[PartNumber]]):
-        adjacent_parts = list(chain.from_iterable([
+        adjacent_parts = list(chain(
             [pn.part_number for pn in part_numbers.get(self.schematic_line - 1, []) if self.is_connected_horizontally(pn)],
             [pn.part_number for pn in part_numbers.get(self.schematic_line, []) if self.is_connected_horizontally(pn)],
             [pn.part_number for pn in part_numbers.get(self.schematic_line + 1, []) if self.is_connected_horizontally(pn)]
-        ]))
+        ))
         return adjacent_parts[0] * adjacent_parts[1]
 
 def find_potential_part_numbers(schematic_lines: list[str]):
