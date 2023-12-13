@@ -2,6 +2,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from day8_input import actual_input
+from shared import timer
 
 example_input_1 = """RL
 
@@ -60,18 +61,18 @@ class Graph:
             nodes_by_name[node.name].left = nodes_by_name[node.left]
             nodes_by_name[node.name].right = nodes_by_name[node.right]
 
-        return Graph(operations, nodes_by_name[nodes[0].name])
+        return Graph(operations, nodes_by_name["AAA"])
 
     def steps_required(self):
         count = 0
         cur_node = self.start_node
         while not cur_node.is_terminal_node:
             op = self.operations[count % len(self.operations)]
-            print(f"{op=} {cur_node=}")
             count += 1
             cur_node = cur_node.left if op == "L" else cur_node.right
         return count
 
+@timer
 def part1(s = example_input_2):
     graph = Graph.from_str(s)
     return graph.steps_required()
