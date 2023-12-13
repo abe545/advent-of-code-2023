@@ -21,7 +21,7 @@ BBB = (AAA, ZZZ)
 ZZZ = (ZZZ, ZZZ)"""
 
 @dataclass
-class GraphNodeBuilder:
+class GraphNode:
     name: str
     left: str
     right: str
@@ -31,45 +31,29 @@ class GraphNodeBuilder:
         name = s[:3]
         left = s[7:10]
         right = s[12:-1]
-        return GraphNodeBuilder(name, left, right)
-
-class GraphNode:
-    name: str
-    left: GraphNode
-    right: GraphNode
-    is_terminal_node: bool
-
-    def __init__(self, name: str):
-        self.name = name
-        self.is_terminal_node = name == "ZZZ"
-
-    def __repr__(self):
-        return f"{self.name=}, left={self.left.name}, right={self.right.name}"
+        return GraphNode(name, left, right)
 
 @dataclass
 class Graph:
     operations: list[str]
-    start_node: GraphNode
+    nodes: dict[str, GraphNode]
 
     @classmethod
     def from_str(cls, s: str):
         lines = s.splitlines()
         operations = list(lines[0])
-        nodes = [GraphNodeBuilder.from_str(s) for s in lines[2:]]
-        nodes_by_name = { n.name:GraphNode(n.name) for n in nodes }
-        for node in nodes:
-            nodes_by_name[node.name].left = nodes_by_name[node.left]
-            nodes_by_name[node.name].right = nodes_by_name[node.right]
+        nodes = [GraphNode.from_str(s) for s in lines[2:]]
+        nodes_by_name = { n.name:n for n in nodes }
 
-        return Graph(operations, nodes_by_name["AAA"])
+        return Graph(operations, nodes_by_name)
 
     def steps_required(self):
         count = 0
-        cur_node = self.start_node
-        while not cur_node.is_terminal_node:
+        cur_node = self.nodes["AAA"]
+        while cur_node.name != "ZZZ":
             op = self.operations[count % len(self.operations)]
             count += 1
-            cur_node = cur_node.left if op == "L" else cur_node.right
+            cur_node = self.nodes[cur_node.left if op == "L" else cur_node.right]
         return count
 
 @timer
